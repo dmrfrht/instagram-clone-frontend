@@ -19,6 +19,7 @@
         type="text"
         v-model="email"
         placeholder="Email"
+        :class="(hasErrors) ? 'err' : ''"
       >
       <input
         type="password"
@@ -27,14 +28,19 @@
       >
       <button
         class="register-btn"
+        @click="register"
       >
         Sing up
       </button>
+      <div class="error_msg" v-if="hasErrors">
+        {{ error }}
+      </div>
     </main>
     <footer>
       <p>
         Already registered?
-        <router-link class="link" to="/login">Register</router-link>.
+        <router-link class="link" to="/login">Register</router-link>
+        .
       </p>
     </footer>
   </div>
@@ -48,7 +54,35 @@ export default {
       forename: "",
       surname: "",
       email: "",
-      password: ""
+      password: "",
+      hasErrors: false,
+      error: ""
+    }
+  },
+  methods: {
+    register() {
+      let api_url = this.$store.state.apiUrl
+      if (this.forename === "" || this.surname === "" || this.email === "" || this.password === "") return alert("Please fill in all fields")
+
+      this.$http.post(api_url + 'user/register', {
+        forename: this.forename,
+        surname: this.surname,
+        email: this.email,
+        password: this.password,
+      })
+        .then(res => {
+          if (res.data.auth) {
+            localStorage.setItem('jwt', res.data.token)
+            this.$router.push('/')
+          } else {
+            this.error = res.data.msg
+            this.hasErrors = true
+          }
+        })
+        .catch(err => {
+          this.hasErrors = true
+          this.error = err
+        })
     }
   }
 }
@@ -103,6 +137,11 @@ export default {
       background-color: #eee;
       outline: none;
 
+      &.err {
+        background: rgba(255, 0, 0, .2);
+        border: 1px solid #af1e2d;
+      }
+
       &:focus {
         border: 1px solid #aaa;
       }
@@ -119,6 +158,19 @@ export default {
       color: #171717;
       font-size: 15px;
       font-weight: 700;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .error_msg {
+      margin: 15px 0px;
+      padding: 10px;
+      background-color: rgba(200, 0, 0, .4);
+      color: #171717;
+      font-weight: 700;
+      border-radius: 8px;
     }
   }
 

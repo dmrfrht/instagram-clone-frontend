@@ -9,22 +9,29 @@
         type="text"
         v-model="email"
         placeholder="Email"
+        :class="(emailError) ? 'err' : ''"
       >
       <input
         type="password"
         v-model="password"
         placeholder="Password"
+        :class="(passwordError) ? 'err' : ''"
       >
       <button
         class="login-btn"
+        @click="login"
       >
         Log in
       </button>
+      <div class="error_msg" v-if="hasErrors">
+        {{ error }}
+      </div>
     </main>
     <footer>
       <p>
         Don't have an account?
-        <router-link class="link" to="/register">Sign up</router-link>.
+        <router-link class="link" to="/register">Sign up</router-link>
+        .
       </p>
     </footer>
   </div>
@@ -36,7 +43,52 @@ export default {
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      hasErrors: false,
+      error: "",
+      emailError: false,
+      passwordError: false
+    }
+  },
+  methods: {
+    login() {
+      let api_url = this.$store.state.apiUrl
+      if (this.email === "" || this.password === "") return alert("Please fill in all fields")
+
+      this.$http.post(api_url + 'user/login', {
+        email: this.email,
+        password: this.password
+      })
+        .then(res => {
+          if (res.data.auth) {
+            localStorage.setItem('jwt', res.data.token)
+            this.$router.push('/')
+          } else {
+            if (res.data.mailError) {
+              this.emailError = true
+
+              setTimeout(() => {
+                this.emailError = false
+              }, 2500)
+            } else this.emailError = false
+
+            if (res.data.passError) {
+              this.passwordError = true
+
+              setTimeout(() => {
+                this.passwordError = false
+              }, 2500)
+            } else this.passwordError = false
+
+            this.error = res.data.msg
+            this.hasErrors = true
+
+            setTimeout(() => {
+              this.hasErrors = false
+            }, 2500)
+          }
+        })
+        .catch(err => console.log(err))
     }
   }
 }
@@ -91,6 +143,11 @@ export default {
       background-color: #eee;
       outline: none;
 
+      &.err {
+        background: rgba(255, 0, 0, .2);
+        border: 1px solid #af1e2d;
+      }
+
       &:focus {
         border: 1px solid #aaa;
       }
@@ -107,6 +164,19 @@ export default {
       color: #171717;
       font-size: 15px;
       font-weight: 700;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .error_msg {
+      margin: 15px 0px;
+      padding: 10px;
+      background-color: rgba(200, 0, 0, .4);
+      color: #171717;
+      font-weight: 700;
+      border-radius: 8px;
     }
   }
 
