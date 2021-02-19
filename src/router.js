@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from "@/store";
 import Home from './views/Home.vue'
 import Login from "@/views/Login";
 import Register from "@/views/Register";
@@ -35,6 +36,10 @@ let router = new Router({
       }
     },
   ]
+})
+
+router.onReady(() => {
+  store.commit('isAuthenticated')
 })
 
 router.beforeEach((to, from, next) => {
