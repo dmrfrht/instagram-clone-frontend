@@ -10,6 +10,10 @@ body {
   min-height: 100vh;
 }
 
+.view {
+  padding: 40px 0px;
+}
+
 /** login scss */
 @import "./pages/login";
 
