@@ -2,11 +2,16 @@
   <main class="view post">
     <section class="stream">
       <video ref="video" id="video" width="100%" height="300" autoplay :class="(!captured) ? 'show' : 'hide'"></video>
-      <button @click="capture" class="capture-btn" v-if="!captured">Capture</button>
-      <button @click="cancel" class="cancel-btn" v-if="captured">Cancel</button>
+      <div class="post-btns">
+        <button @click="capture" class="capture-btn" v-if="!captured">Capture</button>
+        <button @click="cancel" class="cancel-btn" v-if="captured">Cancel</button>
+        <button @click="upload" class="upload-btn" v-if="captured">Upload</button>
+      </div>
     </section>
-    <section class="capture">
-      <canvas ref="canvas" id="canvas" width="100%" height="300" :class="(captured) ? 'show' : 'hide'"></canvas>
+    <section :class="(captured) ? 'show' : 'hide'">
+      <canvas ref="canvas" id="canvas" width="100%" height="300"></canvas>
+      <label for="desc">Description</label>
+      <input type="text" v-model="desc" id="desc" name="desc">
     </section>
   </main>
 </template>
@@ -19,17 +24,35 @@ export default {
       canvas: {},
       constraints: {},
       cap: "",
+      desc: "",
       captured: false
     }
   },
   methods: {
     capture() {
-      let context = this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.canvas.width, this.canvas.width)
-      this.cap = canvas.toDataURL("image/png")
+      this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.canvas.width, this.canvas.width)
+      this.cap = this.canvas.toDataURL("image/png")
       this.captured = true
     },
     cancel() {
       this.captured = false
+    },
+    upload() {
+      let api_url = this.$store.state.apiUrl
+
+      this.$http.post(`${api_url}post/newpost`, {
+        auth_token: localStorage.getItem('jwt'),
+        image: this.cap,
+        desc: this.desc
+      })
+        .then(() => {
+          this.captured = false
+          this.cap = ""
+          this.desc = ""
+        })
+        .catch(err => {
+          if (err) console.log(err)
+        })
     }
   },
   mounted() {
@@ -44,7 +67,7 @@ export default {
     if (this.$refs.canvas) {
       this.canvas = this.$refs.canvas
       this.canvas.width = window.innerWidth
-      this.canvas.height = window.innerHeight - 80
+      this.canvas.height = window.innerWidth
     }
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -64,8 +87,7 @@ export default {
 </script>
 
 <style lang="scss">
-.capture-btn,
-.cancel-btn {
+.post-btns {
   position: absolute;
   bottom: 65px;
   left: 50%;
