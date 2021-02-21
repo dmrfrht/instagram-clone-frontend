@@ -4,6 +4,7 @@ import axios from "axios";
 import store from "@/store";
 import Home from '@/views/Home.vue'
 import Post from "@/views/Post";
+import Profile from "@/views/Profile";
 import Login from "@/views/Login";
 import Register from "@/views/Register";
 
@@ -41,6 +42,14 @@ let router = new Router({
       path: '/newpost',
       name: 'post',
       component: Post,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
       meta: {
         requiresAuth: true
       }
