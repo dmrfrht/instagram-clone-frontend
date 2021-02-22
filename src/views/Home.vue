@@ -7,12 +7,10 @@
         <img :src="post.image" :alt="post.desc" class="post-image">
       </section>
       <footer class="post-desc">
-        <p><strong>{{ post.display_name }}</strong> : {{ post.desc }}</p>
         <p class="timestamp">{{ timestampToDate(post.timestamp) }}</p>
+        <p class="desc"><strong>{{ post.display_name }}</strong> : {{ post.desc }}</p>
       </footer>
     </article>
-
-    <button @click="logout">Logout</button>
   </main>
 </template>
 

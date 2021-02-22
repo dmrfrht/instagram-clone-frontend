@@ -3,15 +3,23 @@
     <section class="stream">
       <video ref="video" id="video" width="100%" height="300" autoplay :class="(!captured) ? 'show' : 'hide'"></video>
       <div class="post-btns">
-        <button @click="capture" class="capture-btn" v-if="!captured">Capture</button>
-        <button @click="cancel" class="cancel-btn" v-if="captured">Cancel</button>
-        <button @click="upload" class="upload-btn" v-if="captured">Upload</button>
+        <button @click="capture" class="capture-btn" v-if="!captured">
+          <i class="material-icons icn-lg">camera</i>
+        </button>
+        <button @click="cancel" class="cancel-btn" v-if="captured">
+          <i class="material-icons icn-lg">cancel</i>
+        </button>
+        <button @click="upload" class="upload-btn" v-if="captured">
+          <i class="material-icons icn-lg">cloud_upload</i>
+        </button>
       </div>
     </section>
     <section :class="(captured) ? 'show' : 'hide'">
       <canvas ref="canvas" id="canvas" width="100%" height="300"></canvas>
-      <label for="desc">Description</label>
-      <input type="text" v-model="desc" id="desc" name="desc">
+      <div class="field-group">
+        <label for="desc">Description:</label>
+        <input type="text" v-model="desc" id="desc" name="desc" class="input-field">
+      </div>
     </section>
   </main>
 </template>
@@ -85,25 +93,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.post-btns {
-  position: absolute;
-  bottom: 65px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.show {
-  display: block;
-}
-
-.hide {
-  display: none;
-}
-
-.image {
-  width: 100%;
-  height: auto;
-}
-</style>
