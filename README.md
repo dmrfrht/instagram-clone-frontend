@@ -1,4 +1,4 @@
-# instagram-clone-frontend
+# InstaCLONE [Frontend]
 
 ## Project setup
 ```
@@ -19,3 +19,6 @@ npm run build
 ```
 npm run lint
 ```
+
+## Backend Project [link](https://github.com/dmrfrht/instagram-clone-backend)
+
